@@ -1,0 +1,14 @@
+server:
+  port: 8082
+
+mongo:
+  uri: mongodb://mongoadmin:qrtest@localhost:27017
+  dbname: qrManagement
+
+spring:
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+  kafka:
+    bootstrap-servers: localhost:9092

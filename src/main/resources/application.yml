@@ -1,0 +1,27 @@
+qrm:
+  kafka:
+    vaccineQrTopicName: vaccine_qr_generation_topic
+
+spring:
+  application:
+    name: qrManagementService
+  cloud:
+    consul:
+      config:
+        enabled: false
+      discovery:
+        healthCheckPath: /actuator/health
+        healthCheckInterval: 20s
+        instanceId: ${spring.application.name}:${random.value}
+  kafka:
+    consumer:
+      group-id: qrManagementConsumerGroup
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    properties:
+      spring:
+        json:
+          use:
+            type:
+              headers: false
