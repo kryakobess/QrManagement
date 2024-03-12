@@ -5,11 +5,9 @@ import com.example.qrmanagementservice.service.facade.QrFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
-
-import java.awt.image.BufferedImage;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,9 +22,9 @@ public class QrController {
                 .map(ResponseEntity::ok);
     }
 
-    @GetMapping("/vaccination/check-image")
-    public Mono<ResponseEntity<VaccineQrCheckDto>> checkVaccineQrByImage(@RequestParam("qrCode") MultipartFile multipartFile) {
-        return facade.checkVaccineQrByImage(multipartFile)
+    @PostMapping(value = "/vaccination/check-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Mono<ResponseEntity<VaccineQrCheckDto>> checkVaccineQrByImage(@RequestPart("qrCode") Mono<FilePart> file) {
+        return facade.checkVaccineQrByImage(file)
                 .map(ResponseEntity::ok);
     }
 }
