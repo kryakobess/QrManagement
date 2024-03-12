@@ -7,12 +7,9 @@ import com.example.qrmanagementservice.service.VaccinationQrService;
 import com.example.qrmanagementservice.service.util.FileValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
-
-import java.awt.image.BufferedImage;
 
 @Service
 @Slf4j
@@ -31,11 +28,13 @@ public class QrFacadeImpl implements QrFacade {
     }
 
     @Override
-    public Mono<VaccineQrCheckDto> checkVaccineQrByImage(MultipartFile file) {
-        log.info("Getting checkVaccineQrByImage for file: {}", file.getOriginalFilename());
-        FileValidator.validateMultipart(file);
-        return Mono.fromCallable(() -> qrCodeManager.decodeQr(file))
+    public Mono<VaccineQrCheckDto> checkVaccineQrByImage(Mono<FilePart> file) {
+        return file.doOnNext(filePart ->
+                        log.info("Getting checkVaccineQrByImage for file: {}", filePart.filename())
+                ).doOnNext(FileValidator::validateMultipart)
+                .flatMap(qrCodeManager::decodeQr)
                 .flatMap(vaccinationQrService::verifyQrCode)
+                .doOnNext(verified -> log.info("Qr code is {} verified", verified ? "" : "not"))
                 .map(VaccineQrCheckDto::new);
     }
 

@@ -20,7 +20,7 @@ public class TestController {
     private final VaccinationQrService vaccinationQrService;
     private final VaccinationCitizenQrMapper vaccinationCitizenQrMapper;
 
-    @PostMapping("/create")
+    @PostMapping("/vaccination/create")
     public Mono<ResponseEntity<VaccinationCitizenQrDto>> createQrCode(@RequestBody VaccineQrMessageDto messageDto) {
         return vaccinationQrService.createQrFromMessage(messageDto)
                 .map(vaccinationCitizenQrMapper::toDto)
