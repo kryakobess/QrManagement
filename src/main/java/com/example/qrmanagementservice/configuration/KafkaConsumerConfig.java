@@ -14,18 +14,18 @@ import java.util.List;
 public class KafkaConsumerConfig {
 
     @Bean
-    public ReceiverOptions<String, VaccineQrMessageDto> vaccineKafkaReceiverOptions(
+    public ReceiverOptions<String, String> vaccineKafkaReceiverOptions(
             @Value("${qrm.kafka.vaccineQrTopicName}") String vaccineQrTopicName,
             KafkaProperties kafkaProperties
     ) {
         return ReceiverOptions
-                .<String, VaccineQrMessageDto> create(kafkaProperties.buildConsumerProperties(null))
+                .<String, String> create(kafkaProperties.buildConsumerProperties(null))
                 .subscription(List.of(vaccineQrTopicName));
     }
 
     @Bean
-    public ReactiveKafkaConsumerTemplate<String, VaccineQrMessageDto> vaccineKafkaConsumerTemplate(
-            ReceiverOptions<String, VaccineQrMessageDto> vaccineReceiverOptions
+    public ReactiveKafkaConsumerTemplate<String, String> vaccineKafkaConsumerTemplate(
+            ReceiverOptions<String, String> vaccineReceiverOptions
     ) {
         return new ReactiveKafkaConsumerTemplate<>(vaccineReceiverOptions);
     }
