@@ -3,6 +3,8 @@ package com.example.qrmanagementservice.service.listener.impl;
 import com.example.qrmanagementservice.model.dto.VaccineQrMessageDto;
 import com.example.qrmanagementservice.service.VaccinationQrService;
 import com.example.qrmanagementservice.service.listener.VaccineQrMessageListener;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +17,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class VaccineQrMessageListenerImpl implements VaccineQrMessageListener {
 
-    private final ReactiveKafkaConsumerTemplate<String, VaccineQrMessageDto> kafkaTemplate;
+    private final ReactiveKafkaConsumerTemplate<String, String> kafkaTemplate;
     private final VaccinationQrService vaccinationQrService;
+    private final ObjectMapper objectMapper;
 
     @PostConstruct
     private void subscribeTopic() {
@@ -26,6 +29,7 @@ public class VaccineQrMessageListenerImpl implements VaccineQrMessageListener {
                         it.topic(), it.partition(), it.key(), it.value()
                 ))
                 .map(ConsumerRecord::value)
+                .map(this::deserialize)
                 .doOnError(throwable -> log.error("Error while consuming message.", throwable))
                 .subscribe(this::consume);
     }
@@ -37,4 +41,13 @@ public class VaccineQrMessageListenerImpl implements VaccineQrMessageListener {
                 .subscribe();
     }
 
+
+    private VaccineQrMessageDto deserialize(String message) {
+        try {
+            return objectMapper.readValue(message, VaccineQrMessageDto.class);
+        } catch (JsonProcessingException e) {
+            log.error("Error while deserializing message {}", message, e);
+            throw new RuntimeException(e);
+        }
+    }
 }
