@@ -5,10 +5,11 @@ import com.example.qrmanagementservice.service.VaccinationQrService;
 import com.example.qrmanagementservice.service.listener.VaccineQrMessageListener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.kafka.core.reactive.ReactiveKafkaConsumerTemplate;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ public class VaccineQrMessageListenerImpl implements VaccineQrMessageListener {
     private final VaccinationQrService vaccinationQrService;
     private final ObjectMapper objectMapper;
 
-    @PostConstruct
+    @EventListener(ApplicationStartedEvent.class)
     private void subscribeTopic() {
         kafkaTemplate.receiveAutoAck()
                 .doOnNext(it -> log.info(
@@ -40,7 +41,6 @@ public class VaccineQrMessageListenerImpl implements VaccineQrMessageListener {
                 .doOnNext(it -> log.info("Registered qr code {}", it))
                 .subscribe();
     }
-
 
     private VaccineQrMessageDto deserialize(String message) {
         try {
