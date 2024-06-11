@@ -11,6 +11,13 @@ java {
     sourceCompatibility = JavaVersion.VERSION_17
 }
 
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "com.example.qrmanagementservice.QrManagementServiceApplication"
+    }
+    enabled = false
+}
+
 configurations {
     compileOnly {
         extendsFrom(configurations.annotationProcessor.get())
@@ -42,8 +49,8 @@ dependencies {
     runtimeOnly ("io.jsonwebtoken:jjwt-impl:0.11.5")
     runtimeOnly ("io.jsonwebtoken:jjwt-jackson:0.11.5")
     compileOnly("org.projectlombok:lombok")
-    annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
     annotationProcessor("org.projectlombok:lombok")
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
 }
