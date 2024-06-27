@@ -2,6 +2,15 @@ qrm:
   kafka:
     vaccineQrTopicName: vaccine_qr_generation_topic
 
+springdoc:
+  enable-native-support: true
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    url: /v3/api-docs
+
 spring:
   application:
     name: qrManagementService
